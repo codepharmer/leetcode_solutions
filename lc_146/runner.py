@@ -96,7 +96,7 @@ def main() -> None:
         raise SystemExit("Usage: python runner.py [step]")
 
     step = 3
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 2: 
         try:
             step = int(sys.argv[1])
         except ValueError as exc:

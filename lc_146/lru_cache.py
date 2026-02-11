@@ -36,14 +36,23 @@ class LRUCache:
         Step 1:
         Insert `node` right after `_head` (mark as most recently used).
         """
-        raise NotImplementedError
+        first = self._head.next
+        node.prev = self._head
+        node.next = first
+        self._head.next = node
+        first.prev = node
+        return
 
     def _remove(self, node: _Node) -> None:
         """
         Step 1:
         Remove `node` from the linked list.
         """
-        raise NotImplementedError
+        a = node.prev
+        b = node.next
+        a.next = b
+        b.prev = a
+        node.prev = node.next = None
 
     def _move_to_front(self, node: _Node) -> None:
         self._remove(node)
@@ -54,7 +63,9 @@ class LRUCache:
         Step 1:
         Remove and return the least recently used *real* node (the node before `_tail`).
         """
-        raise NotImplementedError
+        lru = self._tail.prev
+        self._remove(lru)
+        return lru
 
     def get(self, key: int) -> int:
         """
@@ -62,12 +73,29 @@ class LRUCache:
         Return value if present; otherwise -1.
         Also mark the key as most recently used when found.
         """
-        raise NotImplementedError
+        cache = self._cache
+
+        if key in cache:
+            self._move_to_front(cache[key])
+            return cache[key].value
+        else:
+            return -1
 
     def put(self, key: int, value: int) -> None:
         """
         Step 3:
         Insert/update key with value and evict LRU if needed.
         """
-        raise NotImplementedError
+        if key in self._cache:
+            node = self._cache[key]
+            node.value = value
+            self._move_to_front(node)
+        else:
+            if len(self._cache) >= self._capacity:
+                lru = self._tail.prev
+                del self._cache[lru.key]
+                self._remove(lru)
+            node = self._Node(key, value)
+            self._cache[key] = node
+            self._add_to_front(node)
 
