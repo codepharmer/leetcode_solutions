@@ -8,7 +8,6 @@ class Solution:
     """
 
     def fullJustify(self, words, maxWidth):
-        res = []
         start = 0
         end = 0
         L = 0

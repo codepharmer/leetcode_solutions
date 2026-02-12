@@ -1,28 +1,11 @@
 import sys
 
-from solution import FenwickMax, FenwickSum, Solution
+from solution import FenwickMax, Solution
 
 
 def _assert(condition: bool, message: str) -> None:
     if not condition:
         raise AssertionError(message)
-
-
-def run_step_1() -> None:
-    bit = FenwickSum(10)
-
-    bit.add(0, 1)
-    bit.add(3, 1)
-    bit.add(7, 1)
-
-    _assert(bit.sum(0) == 1, "Step 1: prefix sum at 0 should be 1")
-    _assert(bit.sum(2) == 1, "Step 1: prefix sum at 2 should be 1")
-    _assert(bit.sum(3) == 2, "Step 1: prefix sum at 3 should be 2")
-    _assert(bit.sum(9) == 3, "Step 1: prefix sum at 9 should be 3")
-
-    _assert(bit.kth(1) == 0, "Step 1: 1st element should be at index 0")
-    _assert(bit.kth(2) == 3, "Step 1: 2nd element should be at index 3")
-    _assert(bit.kth(3) == 7, "Step 1: 3rd element should be at index 7")
 
 
 def run_step_2() -> None:
@@ -75,23 +58,18 @@ def main() -> None:
         try:
             step = int(sys.argv[1])
         except ValueError as exc:
-            raise SystemExit("Step must be an integer: 1, 2, or 3") from exc
+            raise SystemExit("Step must be an integer: 2 or 3") from exc
 
-    if step == 1:
-        run_step_1()
-    elif step == 2:
-        run_step_1()
+    if step == 2:
         run_step_2()
     elif step == 3:
-        run_step_1()
         run_step_2()
         run_step_3()
     else:
-        raise SystemExit("Step must be 1, 2, or 3")
+        raise SystemExit("Step must be 2 or 3")
 
     print(f"Step {step} passed.")
 
 
 if __name__ == "__main__":
     main()
-

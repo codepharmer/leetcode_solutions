@@ -1,5 +1,5 @@
 from typing import List
-
+from sortedcontainers import SortedList
 
 class FenwickSum:
     """
@@ -51,12 +51,17 @@ class FenwickMax:
 
     def maximize(self, i: int, val: int) -> None:
         """Set a[i] = max(a[i], val)."""
-        raise NotImplementedError
+        while i <= self._n:
+            self._bit[i] = max(self._bit[i], val)
+            i += i & (-i)
 
     def get(self, i: int) -> int:
         """Return max over indices 0..i (inclusive)."""
-        raise NotImplementedError
-
+        result = 0
+        while i > 0:
+            result = max(result, self._bit[i])
+            i -= i & (-i)
+        return result
 
 class Solution:
     """
@@ -79,5 +84,37 @@ class Solution:
               maxGapInPrefix = fenwickMax.get(prevObstacle)
               tailGap        = x - prevObstacle
         """
-        raise NotImplementedError
 
+        n = min(50000, len(queries) * 3)
+        tree = FenwickMax(n+1)
+        obstacles = SortedList([0, n+1])
+
+        for q in queries:
+             if q[0] == 1:
+                obstacles.add(q[1])
+            
+        for i in range(1, len(obstacles)):
+            gap = obstacles[i] - obstacles[i-1]
+            tree.maximize(obstacles[i], gap)
+        
+        results = []
+
+        for q in reversed(queries):
+            if q[0] == 1:
+                x = q[1]
+                idx = obstacles.index(x)
+                prev = obstacles[idx-1]
+                nxt = obstacles[idx+1]
+                obstacles.remove(x)
+                tree.maximize(nxt, nxt-prev)
+            else:
+                x, sz = q[1], q[2]
+                max_gap = tree.get(x)
+                idx = obstacles.bisect_right(x) -1
+                last_obs = obstacles[idx]
+                max_gap = max(max_gap, x - last_obs)
+                results.append(max_gap >= sz)
+        
+        results.reverse()
+
+        return results
